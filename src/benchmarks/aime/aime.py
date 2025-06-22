@@ -49,21 +49,68 @@ class ModelArguments:
 
 def eval(model_args, gen_args, aime):
 
-    print(len(aime['train']))
-    print(aime['train'][0]['Answer'])
+    # dataset
+    # ID, Problem, Solution, Answer
+    aime = aime['train']
 
-    step = 0 
-    total_time_elapsed = 0
-    new_time = 0
+    # model
+    # generation config
+
+    # tokenizer
+ 
+
+    # COT prompt
+    prefix = "Please reason step by step, and put your final answer within \boxed{}. " 
 
     # get start time
-    #step_start_time = timeit.default_timer()
+    start_time = timeit.default_timer()
 
-    #progress_bar = tqdm(range(len(aime)))
+    # eval
+    progress_bar = tqdm(range(len(aime)))
+    for x in aime:
 
-    # get time elapsed
-    #elapsed = timeit.default_timer() - step_start_time
-    #new_time = new_time + elapsed
+        problem = x['Problem']
+        answer = x['Answer']
+        
+        # prompt
+        messages = [
+            {"role": "system", "content": prefix},
+            {"role": "user", "content": problem}
+        ]
+        text = tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True
+        )
+
+        # inputs
+        model_inputs = tokenizer([text], return_tensors="pt").to(device)
+
+        # generate
+        generated_ids = model.generate(
+            **model_inputs,
+            max_new_tokens=1024
+        )
+
+        # decode
+        generated_ids = [
+            output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
+        ]
+        content = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+
+        # extract answer with format checking
+        box = 'boxed{'
+        box_begin = content.find(box)
+        box_end = box_begin + content[box_begin:].find('}')
+        gen_ans = content[box_begin+len(box):box_end]
+
+        print(gen_ans, answer)
+
+        # get time elapsed
+        elapsed = timeit.default_timer() - start_time
+        print(elapsed)
+
+        progress_bar.update(1)
 
 
 
