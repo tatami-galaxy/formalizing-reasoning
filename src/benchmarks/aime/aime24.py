@@ -49,7 +49,7 @@ class ModelArguments:
 
 def eval(model_args, gen_args, aime):
 
-    print(len(aime))
+    print(len(aime['train']))
     print(aime['train'][0]['Answer'])
 
     step = 0 
