@@ -1,37 +1,15 @@
-[build-system]
-requires = ["flit_core >=3.2,<4"]
-build-backend = "flit_core.buildapi"
-
 [project]
-name = "formalizing_reasoning"
-version = "0.0.1"
-description = "A short description of the project."
-authors = [
-  { name = "Ujan" },
-]
-
+name = "formalizing-reasoning"
+version = "0.1.0"
+description = "Add your description here"
 readme = "README.md"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    
+requires-python = ">=3.13"
+dependencies = [
+    "accelerate>=1.8.1",
+    "datasets>=3.6.0",
+    "ipywidgets>=8.1.7",
+    "notebook>=7.4.3",
+    "torch>=2.7.1",
+    "torchvision>=0.22.1",
+    "transformers>=4.52.4",
 ]
-requires-python = "~=3.10.0"
-
-
-[tool.ruff]
-line-length = 99
-src = ["formalizing_reasoning"]
-include = ["pyproject.toml", "formalizing_reasoning/**/*.py"]
-
-[tool.ruff.lint]
-extend-select = ["I"]  # Add import sorting
-
-[tool.ruff.lint.isort]
-known-first-party = ["formalizing_reasoning"]
-force-sort-within-sections = true
-
-[tool.uv.workspace]
-members = [
-    "formalizing_reasoning",
-]
-
