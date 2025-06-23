@@ -60,9 +60,9 @@ def eval(model_args, gen_args, aime):
         device_map="auto"
     )
     # generation config
-    model.generation_config.temperature = model_args.temperature
-    model.generation_config.top_k = model_args.top_k
-    model.generation_config.top_p = model_args.top_p
+    model.generation_config.temperature = gen_args.temperature
+    model.generation_config.top_k = gen_args.top_k
+    model.generation_config.top_p = gen_args.top_p
 
     # tokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_args.model_name)
