@@ -116,6 +116,8 @@ def eval(model_args, gen_args, aime):
         print('box_begin : {}'.format(box_begin))
         print('gen_ans : {}, answer : {}'.format(gen_ans, answer))
 
+        print(gen_ans == answer)
+
         # get time elapsed
         elapsed = timeit.default_timer() - start_time
         print('time_elapsed : {}'.format(elapsed))
