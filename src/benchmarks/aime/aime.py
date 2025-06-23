@@ -1,15 +1,9 @@
 from dataclasses import dataclass, field
-import typing
-from typing import List
 from tqdm.auto import tqdm
-import timeit
 import csv
-
-import torch
 
 from transformers import (
     HfArgumentParser,
-    AutoConfig, 
     AutoModelForCausalLM,
     AutoTokenizer,
 )
@@ -78,59 +72,66 @@ def eval(model_args, gen_args, data_args):
 
     # file for results
     filename = data_args.dataset_path.split('/')[1] + '_' + model_args.model_name.split('/')[1]
-    print(filename)
-    quit()
-    r_file = open('.csv', 'w', newline ='')
+    r_file = open(filename+'.csv', 'w', newline ='')
+    header = ['ID', 'Answer', 'Generated']
 
-    # eval
-    progress_bar = tqdm(range(len(aime)))
-    for x in aime:
+    with r_file:
+        writer = csv.DictWriter(r_file, fieldnames = header)
+        writer.writeheader()
 
-        problem = x['Problem']
-        answer = x['Answer']
-        
-        # prompt
-        messages = [
-            {"role": "system", "content": prefix},
-            {"role": "user", "content": problem}
-        ]
-        text = tokenizer.apply_chat_template(
-            messages,
-            tokenize=False,
-            add_generation_prompt=True
-        )
+        # eval
+        progress_bar = tqdm(range(len(aime)))
+        for x in aime:
 
-        # inputs
-        model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
+            p_id = x['ID']
+            problem = x['Problem']
+            answer = x['Answer']
+            
+            # prompt
+            messages = [
+                {"role": "system", "content": prefix},
+                {"role": "user", "content": problem}
+            ]
+            text = tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True
+            )
 
-        # generate
-        generated_ids = model.generate(
-            **model_inputs,
-            max_new_tokens=gen_args.max_new_tokens,
-        )
+            # inputs
+            model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
 
-        # decode
-        generated_ids = [
-            output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
-        ]
-        content = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+            # generate
+            generated_ids = model.generate(
+                **model_inputs,
+                max_new_tokens=gen_args.max_new_tokens,
+            )
 
-        # extract answer with format checking
-        box = 'boxed{'
-        box_begin = content.find(box)
-        box_end = box_begin + content[box_begin:].find('}')
-        gen_ans = content[box_begin+len(box):box_end]
+            # decode
+            generated_ids = [
+                output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
+            ]
+            content = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
 
-        print('box_begin : {}'.format(box_begin))
-        print('gen_ans : {}, answer : {}'.format(gen_ans, answer))
+            # extract answer
+            # TODO : check format
+            box = 'boxed{'
+            box_begin = content.find(box)
+            box_end = box_begin + content[box_begin:].find('}')
+            gen_ans = content[box_begin+len(box):box_end]
 
-        print(gen_ans == answer)
+            writer.writerow(
+                {'ID' : p_id, 
+                 'Answer': answer, 
+                 'Generated': gen_ans,
+                }
+            )
 
-        # get time elapsed
-        #elapsed = timeit.default_timer() - start_time
-        #print('time_elapsed : {}'.format(elapsed))
+            # get time elapsed
+            #elapsed = timeit.default_timer() - start_time
+            #print('time_elapsed : {}'.format(elapsed))
 
-        progress_bar.update(1)
+            progress_bar.update(1)
 
 
 
