@@ -22,6 +22,7 @@ class GenerationArguments:
         default="fp16",
         metadata={"help": "choose from : ['no', 'fp16', 'bf16', 'fp8']"}
     )
+    thinking: bool = field(default=False)
 
     def __post_init__(self):
         pass
@@ -71,7 +72,8 @@ def eval(model_args, gen_args, data_args):
     #start_time = timeit.default_timer()
 
     # file for results
-    filename = data_args.dataset_path.split('/')[1] + '_' + model_args.model_name.split('/')[1]
+    think = '_think' if gen_args.thinking else ''
+    filename = data_args.dataset_path.split('/')[1] + '_' + model_args.model_name.split('/')[1] + think
     r_file = open(filename+'.csv', 'w', newline ='')
     header = ['ID', 'Answer', 'Generated',]
 
@@ -92,11 +94,21 @@ def eval(model_args, gen_args, data_args):
                 {"role": "system", "content": prefix},
                 {"role": "user", "content": problem}
             ]
-            text = tokenizer.apply_chat_template(
-                messages,
-                tokenize=False,
-                add_generation_prompt=True
-            )
+
+            # chat template
+            if gen_args.thinking:
+                text = tokenizer.apply_chat_template(
+                    messages,
+                    tokenize=False,
+                    add_generation_prompt=True,
+                    enable_thinking=True,
+                )
+            else:
+                text = tokenizer.apply_chat_template(
+                    messages,
+                    tokenize=False,
+                    add_generation_prompt=True,
+                )
 
             # inputs
             model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
