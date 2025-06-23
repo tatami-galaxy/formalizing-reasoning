@@ -60,12 +60,12 @@ def eval(model_args, gen_args, aime):
         device_map="auto"
     )
     # generation config
-    model.generation_config.temperature = 0.9
-    print(model.generation_config)
-    quit()
+    model.generation_config.temperature = model_args.temperature
+    model.generation_config.top_k = model_args.top_k
+    model.generation_config.top_p = model_args.top_p
 
     # tokenizer
- 
+    tokenizer = AutoTokenizer.from_pretrained(model_args.model_name)
 
     # COT prompt
     prefix = "Please reason step by step, and put your final answer within \boxed{}. " 
@@ -92,7 +92,7 @@ def eval(model_args, gen_args, aime):
         )
 
         # inputs
-        model_inputs = tokenizer([text], return_tensors="pt").to(device)
+        model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
 
         # generate
         generated_ids = model.generate(
@@ -119,6 +119,8 @@ def eval(model_args, gen_args, aime):
         print(elapsed)
 
         progress_bar.update(1)
+
+        quit()
 
 
 
