@@ -21,7 +21,8 @@ class GenerationArguments:
 
     temperature: float = field(default=0.6)
     top_k: int = field(default=20)          
-    top_p: float = field(default=0.95)                         
+    top_p: float = field(default=0.95)    
+    max_new_tokens: int = field(default=32768)                     
     mixed_precision: str = field(
         default="fp16",
         metadata={"help": "choose from : ['no', 'fp16', 'bf16', 'fp8']"}
@@ -97,7 +98,7 @@ def eval(model_args, gen_args, aime):
         # generate
         generated_ids = model.generate(
             **model_inputs,
-            max_new_tokens=1024
+            max_new_tokens=gen_args.max_new_tokens,
         )
 
         # decode
@@ -112,11 +113,12 @@ def eval(model_args, gen_args, aime):
         box_end = box_begin + content[box_begin:].find('}')
         gen_ans = content[box_begin+len(box):box_end]
 
-        print(gen_ans, answer)
+        print('box_begin : {}'.format(box_begin))
+        print('gen_ans : {}, answer : {}'.format(gen_ans, answer))
 
         # get time elapsed
         elapsed = timeit.default_timer() - start_time
-        print(elapsed)
+        print('time_elapsed : {}'.format(elapsed))
 
         progress_bar.update(1)
 
