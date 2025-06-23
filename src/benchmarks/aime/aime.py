@@ -65,7 +65,7 @@ def eval(model_args, gen_args, data_args):
     tokenizer = AutoTokenizer.from_pretrained(model_args.model_name)
 
     # COT prompt
-    prefix = "Please reason step by step, and put your final answer within \boxed{}. " 
+    prefix = "Please reason step by step, and put your final answer within \boxed{}." 
 
     # get start time
     #start_time = timeit.default_timer()
@@ -73,7 +73,7 @@ def eval(model_args, gen_args, data_args):
     # file for results
     filename = data_args.dataset_path.split('/')[1] + '_' + model_args.model_name.split('/')[1]
     r_file = open(filename+'.csv', 'w', newline ='')
-    header = ['ID', 'Answer', 'Generated']
+    header = ['ID', 'Answer', 'Generated',]
 
     with r_file:
         writer = csv.DictWriter(r_file, fieldnames = header)
@@ -115,15 +115,16 @@ def eval(model_args, gen_args, data_args):
 
             # extract answer
             # TODO : check format
-            box = 'boxed{'
-            box_begin = content.find(box)
-            box_end = box_begin + content[box_begin:].find('}')
-            gen_ans = content[box_begin+len(box):box_end]
+            #box = 'boxed{'
+            #box_begin = content.find(box)
+            #box_end = box_begin + content[box_begin:].find('}')
+            #gen_ans = content[box_begin+len(box):box_end]
 
             writer.writerow(
                 {'ID' : p_id, 
                  'Answer': answer, 
-                 'Generated': gen_ans,
+                 #'Generated': gen_ans,
+                 'Generated': content,
                 }
             )
 
