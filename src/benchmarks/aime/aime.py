@@ -60,7 +60,7 @@ def eval(model_args, gen_args, aime):
         device_map="auto"
     )
     # generation config
-    model.generation_config['temperature'] = 0.9
+    model.generation_config.temperature = 0.9
     print(model.generation_config)
     quit()
 
