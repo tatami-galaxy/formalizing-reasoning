@@ -3,6 +3,7 @@ import typing
 from typing import List
 from tqdm.auto import tqdm
 import timeit
+import csv
 
 import torch
 
@@ -48,9 +49,10 @@ class ModelArguments:
     )
 
 
-def eval(model_args, gen_args, aime):
+def eval(model_args, gen_args, data_args):
 
-    # dataset
+    # load dataset
+    aime = load_dataset(data_args.dataset_path)
     # ID, Problem, Solution, Answer
     aime = aime['train']
 
@@ -72,7 +74,13 @@ def eval(model_args, gen_args, aime):
     prefix = "Please reason step by step, and put your final answer within \boxed{}. " 
 
     # get start time
-    start_time = timeit.default_timer()
+    #start_time = timeit.default_timer()
+
+    # file for results
+    filename = data_args.dataset_path.split('/')[1] + '_' + model_args.model_name.split('/')[1]
+    print(filename)
+    quit()
+    r_file = open('.csv', 'w', newline ='')
 
     # eval
     progress_bar = tqdm(range(len(aime)))
@@ -119,12 +127,11 @@ def eval(model_args, gen_args, aime):
         print(gen_ans == answer)
 
         # get time elapsed
-        elapsed = timeit.default_timer() - start_time
-        print('time_elapsed : {}'.format(elapsed))
+        #elapsed = timeit.default_timer() - start_time
+        #print('time_elapsed : {}'.format(elapsed))
 
         progress_bar.update(1)
 
-        quit()
 
 
 
@@ -134,8 +141,5 @@ if __name__ == "__main__":
     parser = HfArgumentParser((ModelArguments, GenerationArguments, DataArguments))
     model_args, gen_args, data_args = parser.parse_args_into_dataclasses()
 
-    # load dataset
-    aime = load_dataset(data_args.dataset_path)
-
     # run eval
-    eval(model_args, gen_args, aime)
+    eval(model_args, gen_args, data_args)
