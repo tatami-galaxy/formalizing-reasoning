@@ -54,7 +54,15 @@ def eval(model_args, gen_args, aime):
     aime = aime['train']
 
     # model
+    model = AutoModelForCausalLM.from_pretrained(
+        model_args.model_name,
+        torch_dtype="auto",
+        device_map="auto"
+    )
     # generation config
+    model.generation_config['temperature'] = 0.9
+    print(model.generation_config)
+    quit()
 
     # tokenizer
  
