@@ -28,7 +28,7 @@ def addPoints (p1 : Point) (p2 : Point) : Point :=
 
 #eval addPoints { x := 1.5, y := 32 } { x := -8, y := 0.2 }
 
-
+#check fun(x : Nat) => x + 5
 
 
 
@@ -41,3 +41,10 @@ variable {q : Prop}
 theorem t1 : p → q → p := fun hp : p => fun hq : q => hp
 
 #print t1
+
+theorem t2 : p → q → p :=
+  fun hp : p =>
+  fun hq : q =>
+  show p from hp
+
+#print t2
