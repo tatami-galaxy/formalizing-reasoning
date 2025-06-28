@@ -30,7 +30,13 @@ def addPoints (p1 : Point) (p2 : Point) : Point :=
 
 #check fun(x : Nat) => x + 5
 
+#check Nat.add
+#check Nat.add 5
 
+def α : Type := Nat
+#check α
+
+#eval (λ x y : Nat => x + y ) 10 12
 
 
 set_option linter.unusedVariables false
@@ -48,3 +54,9 @@ theorem t2 : p → q → p :=
   show p from hp
 
 #print t2
+
+#check 2 + 2 = 4
+
+#check p ∨ q
+
+example (hp : p) (hq : q) : p ∧ q := And.intro hp hq
