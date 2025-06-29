@@ -82,7 +82,7 @@ def eval(model_args, gen_args, data_args):
         writer = csv.DictWriter(r_file, fieldnames = header)
         writer.writeheader()
 
-        for run in runs : 
+        for run in range(runs) : 
             print('run : {}'.format(run+1))
 
             # eval
