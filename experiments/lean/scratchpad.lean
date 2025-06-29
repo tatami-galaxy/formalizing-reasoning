@@ -1,33 +1,3 @@
-#eval String.append "Hello" " Lean"
-#eval String.append "it is " (if 1 > 2 then "yes" else "no")
-#eval (1 + 2 : Nat)
-#eval (1 - 2 : Int)
-
-def add1 (n : Nat) : Nat := n + 1
-
-#eval add1 5
-
-def spaceBetween (before : String) (after : String) : String :=
-  String.append before (String.append " " after)
-
-#eval spaceBetween "hello" "world"
-
-#check spaceBetween
-
-structure Point where
-  x : Float
-  y : Float
-deriving Repr
-
-def origin : Point := { x := 0.0, y := 0.0 }
-
-#eval origin.x
-
-def addPoints (p1 : Point) (p2 : Point) : Point :=
-  { x := p1.x + p2.x, y := p1.y + p2.y }
-
-#eval addPoints { x := 1.5, y := 32 } { x := -8, y := 0.2 }
-
 #check fun(x : Nat) => x + 5
 
 #check Nat.add
@@ -38,25 +8,33 @@ def α : Type := Nat
 
 #eval (λ x y : Nat => x + y ) 10 12
 
+def cons (α : Type) (a : α) (as : List α) : List α :=
+  List.cons a as
 
+#check cons
+
+
+--
 set_option linter.unusedVariables false
----
-variable {p : Prop}
-variable {q : Prop}
+--
 
-theorem t1 : p → q → p := fun hp : p => fun hq : q => hp
-
-#print t1
-
-theorem t2 : p → q → p :=
-  fun hp : p =>
-  fun hq : q =>
+-- difference between (p q : Prop) and {p q : Prop} ?
+variable (p q : Prop)
+--variable {p q : Prop}
+theorem t1 : p → q → p :=
+  fun (hp : p) (hq : q) =>
   show p from hp
 
-#print t2
+--theorem t1 (p q : Prop) (hp : p) (hq : q) : p := hp
 
-#check 2 + 2 = 4
+variable{a b c d : Prop}
+-- wont compile if variable {p q : Prop} instead of variable (p q : Prop)
+#check t1 a b
 
-#check p ∨ q
+-- show from?
 
-example (hp : p) (hq : q) : p ∧ q := And.intro hp hq
+variable (p q r s : Prop)
+
+theorem t2 (h₁ : q → r) (h₂ : p → q) : p → r :=
+  fun h₃ : p =>
+  show r from h₁ (h₂ h₃)
