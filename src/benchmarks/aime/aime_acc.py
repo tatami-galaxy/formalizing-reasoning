@@ -30,7 +30,7 @@ if __name__ == "__main__":
         gen_ans = gen[box_begin+len(box):box_end]
         
         try:
-            gen_ans= int(gen_ans)
+            gen_ans = int(gen_ans)
             if gen_ans == ans : acc += 1
         # incorrect gen
         except ValueError:
