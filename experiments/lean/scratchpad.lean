@@ -43,3 +43,15 @@ variable (p q r s : Prop)
 theorem t3 (h₁ : q → r) (h₂ : p → q) (h₃ : p): p → r :=
   fun h₄ : p =>
   show r from h₁ (h₂ h₃)
+
+variable (p q r : Prop)
+example (hp : p) (hq : q) : p ∧ q := And.intro hp hq
+#check fun (hq : q) (hp : p) => And.intro hp hq
+
+variable (p q : Prop)
+example (h : p ∧ q) : q ∧ p :=
+  And.intro (And.right h) (And.left h)
+
+variable (p q : Prop)
+example (h : p ∧ q) : q ∧ p :=
+  ⟨h.right, h.left⟩
