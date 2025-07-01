@@ -55,3 +55,33 @@ example (h : p ∧ q) : q ∧ p :=
 variable (p q : Prop)
 example (h : p ∧ q) : q ∧ p :=
   ⟨h.right, h.left⟩
+
+----
+variable (p q : Prop)
+
+theorem and_swap : p ∧ q ↔ q ∧ p :=
+  Iff.intro
+    (fun h : p ∧ q =>
+     show q ∧ p from And.intro (And.right h) (And.left h))
+    (fun h : q ∧ p =>
+     show p ∧ q from And.intro (And.right h) (And.left h))
+
+theorem and_swap_2 : p ∧ q ↔ q ∧ p :=
+  ⟨ fun h => ⟨h.right, h.left⟩, fun h => ⟨h.right, h.left⟩ ⟩
+
+#check and_swap_2 p q
+
+variable (p q : Prop)
+
+example (h : p ∧ q) : q ∧ p :=
+  have hp : p := h.left
+  have hq : q := h.right
+  show q ∧ p from And.intro hq hp
+
+
+variable (p q : Prop)
+
+example (h : p ∧ q) : q ∧ p :=
+  have hp : p := h.left
+  suffices hq : q from And.intro hq hp
+  show q from And.right h
